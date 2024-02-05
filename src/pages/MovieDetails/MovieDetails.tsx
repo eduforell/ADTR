@@ -34,7 +34,6 @@ const MovieDetails = () => {
         <s.MovieInfo>
           <b>Year:</b> {movie?.Year}
         </s.MovieInfo>
-        {/* Adicione mais informações conforme necessário */}
       </s.MovieDetailsContainer>
     </s.Container>
   );

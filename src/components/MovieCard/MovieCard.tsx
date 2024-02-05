@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import * as s from './styled';
 import { Movie } from '../../types/movie';
 
@@ -11,12 +10,10 @@ const MovieCard = ({ movie }: MovieCardProps) => {
     <s.CardContainer>
       <s.PosterImage src={movie.Poster} alt={movie.Title} />
       <s.ContentWrapper>
-        <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID}>
-          <s.Title>{movie.Title}</s.Title>
-          <s.Type>
-            {movie.Type} - Year: {movie.Year}
-          </s.Type>
-        </Link>
+        <s.Title>{movie.Title}</s.Title>
+        <s.Type>
+          {movie.Type} - Year: {movie.Year}
+        </s.Type>
       </s.ContentWrapper>
     </s.CardContainer>
   );

@@ -4,6 +4,7 @@ import { searchMovieList } from '../../api/movies';
 import { Movie } from '../../types/movie';
 import MovieGrid from '../../components/MovieGrid/MovieGrid';
 import Footer from '../../components/Footer/Footer';
+import MovieList from '../../components/MovieList/MovieList';
 
 const Home = () => {
   const [searchMovie, setSearchMovie] = useState<Array<Movie>>([]);
@@ -12,7 +13,9 @@ const Home = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const haveResults = Array.isArray(searchMovie) && searchMovie.length > 0;
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
+  // Input search
   const handleSearch = async () => {
     try {
       const response = await searchMovieList(searchInput);
@@ -24,23 +27,32 @@ const Home = () => {
     }
   };
 
+  // Input enter for search
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
 
+  // Input change event
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
   };
 
+  // Filterig by type - movie or series
   const handleFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedType = event.target.value;
     setFilterType(selectedType === 'all' ? null : selectedType);
   };
 
+  // Sorting by year
   const handleSortOrder = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  // Changing viewMode between grid and list
+  const toggleViewMode = () => {
+    setViewMode((prevMode) => (prevMode === 'grid' ? 'list' : 'grid'));
   };
 
   return (
@@ -59,40 +71,62 @@ const Home = () => {
         </s.NavbarContainer>
         <>
           <s.FilterContainer>
-            <h1>
+            <s.StyledH1>
               {isLoading
                 ? 'Hello! :)'
                 : haveResults
                 ? 'Results'
                 : '😔 No Results'}
-            </h1>
+            </s.StyledH1>
             {!isLoading && haveResults && (
               <>
                 <s.SortAndFiltering>
-                  <button onClick={handleSortOrder}>Sort by Year</button>
-                  <select onChange={handleFilter}>
+                  <s.StyledButton onClick={toggleViewMode}>
+                    {viewMode === 'grid'
+                      ? 'Switch to List View'
+                      : 'Switch to Grid View'}
+                  </s.StyledButton>
+                  <s.StyledButton onClick={handleSortOrder}>
+                    Sort by Year
+                  </s.StyledButton>
+                  <s.StyledSelect onChange={handleFilter}>
                     <option value="all">All</option>
                     <option value="movie">Movies</option>
                     <option value="series">Series</option>
-                  </select>
+                  </s.StyledSelect>
                 </s.SortAndFiltering>
               </>
             )}
           </s.FilterContainer>
           {!isLoading ? (
             haveResults ? (
-              <MovieGrid
-                movies={searchMovie
-                  .filter(
-                    (movie) =>
-                      !filterType || (movie && movie.Type === filterType)
-                  )
-                  .sort((a, b) =>
-                    sortOrder === 'asc'
-                      ? a.Year.localeCompare(b.Year)
-                      : b.Year.localeCompare(a.Year)
-                  )}
-              />
+              viewMode === 'grid' ? (
+                <MovieGrid
+                  movies={searchMovie
+                    .filter(
+                      (movie) =>
+                        !filterType || (movie && movie.Type === filterType)
+                    )
+                    .sort((a, b) =>
+                      sortOrder === 'asc'
+                        ? a.Year.localeCompare(b.Year)
+                        : b.Year.localeCompare(a.Year)
+                    )}
+                />
+              ) : (
+                <MovieList
+                  movies={searchMovie
+                    .filter(
+                      (movie) =>
+                        !filterType || (movie && movie.Type === filterType)
+                    )
+                    .sort((a, b) =>
+                      sortOrder === 'asc'
+                        ? a.Year.localeCompare(b.Year)
+                        : b.Year.localeCompare(a.Year)
+                    )}
+                />
+              )
             ) : (
               <p>Sorry, it looks like we don't have anything with that name.</p>
             )

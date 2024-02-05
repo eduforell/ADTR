@@ -5,6 +5,11 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 30px;
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 export const MovieImage = styled.img`
